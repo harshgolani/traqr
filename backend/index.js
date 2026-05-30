@@ -19,7 +19,9 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 const redisClient = redis.createClient({ url: process.env.REDIS_URL })
 redisClient.connect().catch(console.error)
 
-app.use(cors())
+app.use(cors({
+  origin: ['https://traqr-app.netlify.app', 'http://localhost:5173']
+}))
 app.use(express.json())
 
 // Rate limiting
