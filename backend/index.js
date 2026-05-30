@@ -7,6 +7,8 @@ const { nanoid } = require('nanoid')
 const rateLimit = require('express-rate-limit')
 
 const app = express()
+app.set('trust proxy', 1)
+
 const PORT = process.env.PORT || 3000
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000'
 
@@ -22,7 +24,7 @@ app.use(express.json())
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
+  windowMs: 60 * 60 * 1000,
   max: 50,
   message: { error: 'Too many requests, please try again later' }
 })
@@ -57,6 +59,7 @@ app.post('/api/shorten', async (req, res) => {
       original_url: url
     })
   } catch (err) {
+    console.error('Shorten error:', err)
     res.status(500).json({ error: 'Failed to shorten URL' })
   }
 })
@@ -67,14 +70,12 @@ app.get('/:short_code', async (req, res) => {
   if (short_code === 'favicon.ico') return res.status(404).end()
 
   try {
-    // Check Redis first
     const cached = await redisClient.get(short_code)
     if (cached) {
       logClick(short_code, req)
       return res.redirect(302, cached)
     }
 
-    // Fall back to PostgreSQL
     const result = await pool.query(
       'SELECT original_url FROM urls WHERE short_code = $1',
       [short_code]
