@@ -42,7 +42,7 @@ export default function App() {
     setResult(null)
     setError(null)
     try {
-      const r = await fetch('http://localhost:3000/api/shorten', {
+      const r = await fetch('https://traqr-production-fbdd.up.railway.app/api/shorten', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: url.trim() })
@@ -67,7 +67,7 @@ export default function App() {
       return
     }
     try {
-      const r = await fetch(`http://localhost:3000/api/analytics/${short_code}`)
+      const r = await fetch(`https://traqr-production-fbdd.up.railway.app/api/analytics/${short_code}`)
       const data = await r.json()
       setAnalyticsData(prev => ({ ...prev, [short_code]: data }))
       setOpenAnalytics(short_code)
@@ -78,7 +78,7 @@ export default function App() {
 
   async function handleDelete(short_code) {
     try {
-      await fetch(`http://localhost:3000/api/urls/${short_code}`, { method: 'DELETE' })
+      await fetch(`https://traqr-production-fbdd.up.railway.app/api/urls/${short_code}`, { method: 'DELETE' })
       setUrls(prev => prev.filter(u => u.short_code !== short_code))
       if (openAnalytics === short_code) setOpenAnalytics(null)
     } catch (e) {
