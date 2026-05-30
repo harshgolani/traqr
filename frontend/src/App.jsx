@@ -28,7 +28,7 @@ export default function App() {
 
   async function fetchUrls() {
     try {
-      const r = await fetch('https://traqr-production-fbdd.up.railway.app')
+      const r = await fetch('https://traqr-production-fbdd.up.railway.app/api/urls')
       const data = await r.json()
       setUrls(data)
     } catch (e) {
